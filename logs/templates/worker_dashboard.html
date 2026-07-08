@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Worker Dashboard</h1>
+<p> Welcome {{user.username}}!</p>
+<h2> Assigned Sites</h2>
+{% for site in assigned_sites %}
+    <div>
+        <a href="{% url 'worker_site_detail' site.id %}">{{ site.name }}</a>
+        {% if site.pk in marked_sites %}
+            <button disabled>Marked</button>
+        {% else %}
+            <form method="POST" action="{% url 'mark_attendance' site.pk %}">
+                {% csrf_token %}
+                <button type="submit">Mark Attendance </button>
+            </form>
+        {% endif %}
+    </div>
+{% empty %}
+    <p>No assigned sites.</p>
+{% endfor %}
+{% endblock %}

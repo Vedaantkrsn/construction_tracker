@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Worker Profile</h1>
+
+<h2>{{ worker.username }}</h2>
+<p><strong>Email:</strong> 
+    <span id="email-display">{{ worker.email|default:"Not provided" }}</span>
+    <button onclick="document.getElementById('email-form').style.display='block'">Edit</button>
+</p>
+
+<form id="email-form" method="POST" action="{% url 'update_email' worker.pk %}" style="display:none">
+    {% csrf_token %}
+    <input type="email" name="email" placeholder="Enter email">
+    <button type="submit">Save</button>
+</form>
+<p><strong>Date Joined:</strong> {{ worker.date_joined }}</p>
+
+<h2>Assigned Sites</h2>
+<a href="{% url 'assign_sites' worker.pk %}">Assign Sites</a>
+
+{% if assigned_sites %}
+    <ul>
+        {% for site in assigned_sites %}
+            <li>
+                <a href="{% url 'site_detail' site.pk %}">{{ site.name }}</a>
+                - {{ site.location }}
+                - {{ site.status }}
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No sites assigned to this worker.</p>
+{% endif %}
+
+
+
+<h2>Attendance Summary</h2>
+<p>Present: {{ total_present }}</p>
+<p>Absent: {{ total_absent }}</p>
+
+<h2>Attendance Records</h2>
+
+{% if attendance_records %}
+    <table border="1" cellpadding="8">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Site</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for attendance in attendance_records %}
+                <tr>
+                    <td>{{ attendance.attendance_date }}</td>
+                    <td>{{ attendance.worksite.name }}</td>
+                    <td>
+                        {% if attendance.present_or_absent %}
+                            Present
+                        {% else %}
+                            Absent
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No attendance records yet.</p>
+{% endif %}
+
+<a href="{% url 'worker_list' %}">Back to Worker List</a>
+
+{% endblock %}

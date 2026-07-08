@@ -1,0 +1,31 @@
+    
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1> Materials Log </h1>
+<h2> For  {{ log.site_worked_on }} </h2>
+
+<a href="{% url 'add_mat_log' log.pk %}"> Add Material Details </a>
+
+<table>
+    <thead>
+        <tr>
+            <th> Material Name </th>
+            <th> Material Quantity </th>
+            <th> Material Unit </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for material in material_list %}
+            <tr>
+                <td> {{ material.material_name }} </td>
+                <td> {{ material.quantity }} </td>
+                <td> {{ material.unit }} </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+{% endblock %}

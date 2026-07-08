@@ -1,0 +1,17 @@
+    
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1> Assign Sites </h1>
+<p><a href="{% url 'worker_profile' worker.pk %}">Back to Profile</a></p>
+
+<form method="POST">
+    {% csrf_token  %}
+    {{ form.as_p}}
+    <button type="submit">Assign Sites</button>
+</form>
+
+
+
+{% endblock %}

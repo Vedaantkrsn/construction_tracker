@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1> Dashboard </h1>
+<p> Welcome {{ request.user.username }}! </p>
+<h2> Construction Sites </h2>
+<a href="{% url 'add_site' %}">Add Site</a>
+<a href="{% url 'worker_list' %}">View Worker List</a>
+<ul>
+    {% for site in sites %}
+        <li> <a href="{% url 'site_detail' site.pk %}"> {{ site.name}} </a>
+        - Status: {{site.status}}
+        - Created by {{ site.created_by }} on {{site.created_at}}</li>
+    {% endfor %}
+</ul>
+
+<h2> Stats </h2>
+<p> Total Sites: {{ total_sites }} </p>
+<p> Active Sites: {{ total_active_sites }} </p>
+<p> On Hold Sites: {{ total_onhold_sites }} </p>
+<p> Completed Sites: {{ total_completed_sites }} </p>
+
+{% endblock %}

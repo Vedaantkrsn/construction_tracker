@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2> Site Details </h2>
+<p><strong>Name:</strong> {{ site.name }}</p>
+<p><strong>Location:</strong> {{ site.location }}</p>
+<p><strong>Status:</strong> {{ site.status }}</p>
+
+<h2> Attendance Log For {{ site.name }}</h2>
+<table>
+    <thead>
+        <tr>
+            <th> Date </th>
+            <th> Present/Absent </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in attendance_log %}
+            <tr>
+                <td> {{ log.attendance_date }} </td>
+                {% if log.present_or_absent %}
+                    <td> Present </td>
+                {% else %}
+                    <td> Absent </td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

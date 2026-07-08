@@ -1,0 +1,42 @@
+    
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1> Site Detail </h1>
+<p> Details of {{ site.name }}</p>
+<p> Address: {{ site.location }}</p>
+<p> Start Date: {{ site.start_date }}</p>
+<p> Company Developing: {{ site.company_name }}</p>
+
+<h1> Daily Log </h1>
+<table>
+    <thead>
+        <tr>
+            <th> Site Worked On </th>
+            <th> Date Today </th>
+            <th> Worker Count </th>
+            <th> Site Manager</th>
+            <th> Work Overview </th>
+            <th> Created By </th>
+            <th> Materials Used</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in logdetail %}
+            <tr>
+                <td> {{ log.site_worked_on }} </td>
+                <td> {{ log.date_today }} </td>
+                <td> {{ log.worker_count }} </td>
+                <td> {{ log.site_manager }} </td>
+                <td> {{ log.work_overview }} </td>
+                <td> {{ log.created_by }} </td>
+                <td> <a href="{% url 'materials_log' log.pk %}">See More</a> </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h2> <a href="{% url 'add_log' site.pk %}">Add New Log</a> </h2>
+
+{% endblock %}

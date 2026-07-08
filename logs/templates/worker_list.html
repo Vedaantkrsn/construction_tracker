@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content%}
+
+<h1>Worker List</h1>
+<ul>
+    {% for worker in workerlist %}
+        <li> <a href="{% url 'worker_profile' worker.user.pk %}">{{ worker.user.username }}</a> </li>
+    {% endfor %}
+</ul>
+
+<a href="{% url 'dashboard' %}">Back to Dashboard</a>
+
+{% endblock %}
