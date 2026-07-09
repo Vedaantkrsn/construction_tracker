@@ -1,31 +1,66 @@
-    
 {% extends 'base.html' %}
 
 {% block content %}
 
-<h1> Materials Log </h1>
-<h2> For  {{ log.site_worked_on }} </h2>
+<div class="container-fluid px-4 mt-4">
 
-<a href="{% url 'add_mat_log' log.pk %}"> Add Material Details </a>
+    <!-- Material Log Info -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header site-header">
+            <h3 class="mb-0">🧱 Materials Log</h3>
+        </div>
+        <div class="card-body log-detail-body">
+            <p class="mb-0">
+                <strong>Construction Site:</strong>
+                {{ log.site_worked_on }}
+            </p>
+        </div>
+    </div>
 
-<table>
-    <thead>
-        <tr>
-            <th> Material Name </th>
-            <th> Material Quantity </th>
-            <th> Material Unit </th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for material in material_list %}
-            <tr>
-                <td> {{ material.material_name }} </td>
-                <td> {{ material.quantity }} </td>
-                <td> {{ material.unit }} </td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <a href="{% url 'add_mat_log' log.pk %}"
+           class="btn btn-success">
+            + Add Material
+        </a>
+        <a href="{% url 'site_detail' log.site_worked_on.pk %}"
+           class="btn btn-success">
+            ← Back
+        </a>
+    </div>
 
-
+    <!-- Materials Table -->
+    <div class="card shadow-sm">
+        <div class="card-header site-header">
+            <h4 class="mb-0">Materials Used</h4>
+        </div>
+        <div class="card-body table-container material-log-body">
+            <div class="logs-table-wrapper">
+                <table class="logs-table">
+                    <thead>
+                        <tr>
+                            <th>Material Name</th>
+                            <th>Quantity</th>
+                            <th>Unit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for material in material_list %}
+                        <tr>
+                            <td>{{ material.material_name }}</td>
+                            <td>{{ material.quantity }}</td>
+                            <td>{{ material.unit }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center text-muted">
+                                No materials have been added yet.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

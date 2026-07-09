@@ -1,0 +1,129 @@
+.custom-navbar {
+    background-color: rgb(58, 43, 29);
+    border-bottom: 2px solid rgb(176, 151, 118);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.sites-container {
+    background-color: #EEE3CF;
+    border-radius: 16px;
+    padding: 25px;
+    margin-top: 15px;
+    box-shadow: inset 0 4px 14px rgba(0, 0, 0, 0.22);
+}
+
+.site-card {
+    transition: all 0.25s ease;
+    cursor: pointer;
+    background-color: rgb(230, 213, 184);
+}
+
+.site-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    background-color: rgb(220, 201, 166);
+}
+
+.site-detail-card {
+    border-radius: 16px;
+}
+
+.site-detail-header {
+    background-color: rgb(172, 149, 120);
+    color: whitesmoke;
+    font-weight: 600;
+    border-bottom: 1px solid rgb(205, 188, 160);
+}
+
+.site-detail-body {
+    background-color: #EEE3CF;
+    color: rgb(110, 85, 58);
+    border-radius: 0 0 16px 16px;
+}
+
+.card-body-custom {
+    background-color: #EEE3CF;
+    border-radius: 16px;
+    padding: 15px;
+    margin-top: 5px;
+    box-shadow: inset 0 4px 14px rgba(0, 0, 0, 0.22);
+}
+
+.logs-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden;
+    border-radius: 12px;
+    border: 2px solid rgb(205, 188, 160);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10);
+}
+
+.logs-table thead th {
+    background-color: rgb(172, 149, 120);  
+    color: whitesmoke;
+    padding: 14px;
+    font-weight: 600;
+}
+
+.logs-table tbody td {
+    background-color: rgb(238, 229, 210);
+    color:rgb(110, 85, 58);   
+    padding: 14px;
+    vertical-align: middle;
+    border-top: 1px solid rgb(220, 205, 180);
+}
+
+.logs-table tbody tr:hover td {
+    background-color: rgb(230, 219, 198);  
+    transition: background-color 0.2s ease;
+}
+
+.site-btn {
+    background-color: rgb(190, 166, 134);
+    color: whitesmoke;
+    border: none;
+}
+
+.site-btn:hover {
+    background-color: rgb(200, 180, 150);
+    color: white;
+}
+
+body {
+    background-color: rgb(250, 245, 235);
+}
+
+.add-logdetail-block {
+    border: 2px solid rgb(205, 188, 160);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.site-header {
+    background-color: rgb(172, 149, 120);
+    color: whitesmoke;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.log-detail-body {
+    background-color: #EEE3CF;
+    color: rgb(110, 85, 58);
+    
+}
+
+.material-log-body {
+    background-color: #EEE3CF;
+    box-shadow: inset 0 4px 14px rgba(0, 0, 0, 0.22);
+}
+
+.help-text {
+    display: none;
+}
+
+.form-text ul {
+    margin-top: 6px;
+    padding-left: 18px;
+    color: #6c757d;
+    font-size: 0.9rem;
+}

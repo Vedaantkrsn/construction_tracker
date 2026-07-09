@@ -1,23 +1,84 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block content %}
-<h1> Dashboard </h1>
-<p> Welcome {{ request.user.username }}! </p>
-<h2> Construction Sites </h2>
-<a href="{% url 'add_site' %}">Add Site</a>
-<a href="{% url 'worker_list' %}">View Worker List</a>
-<ul>
-    {% for site in sites %}
-        <li> <a href="{% url 'site_detail' site.pk %}"> {{ site.name}} </a>
-        - Status: {{site.status}}
-        - Created by {{ site.created_by }} on {{site.created_at}}</li>
-    {% endfor %}
-</ul>
+<div class="container-fluid px-5 mt-4">
+    <h1 class="mb-3">Dashboard</h1>
+    <p>Welcome, <strong>{{ request.user.username }}</strong>!</p>
 
-<h2> Stats </h2>
-<p> Total Sites: {{ total_sites }} </p>
-<p> Active Sites: {{ total_active_sites }} </p>
-<p> On Hold Sites: {{ total_onhold_sites }} </p>
-<p> Completed Sites: {{ total_completed_sites }} </p>
+    <!-- Stats Row -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title">Total Sites</h5>
+                    <h2>{{ total_sites }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h5 class="card-title">Active</h5>
+                    <h2>{{ total_active_sites }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <h5 class="card-title">On Hold</h5>
+                    <h2>{{ total_onhold_sites }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-secondary">
+                <div class="card-body">
+                    <h5 class="card-title">Completed</h5>
+                    <h2>{{ total_completed_sites }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- Sites -->
+    <div class="d-flex justify-content-between align-items-center mb-1">
+        <h2>Construction Sites</h2>
+        <div>
+            <a href="{% url 'worker_list' %}" class="btn btn-success">👷 View Workers</a>
+            <a href="{% url 'add_site' %}" class="btn btn-success">+ Add Site</a>
+        </div>
+    </div>
+
+    <div class="sites-container mb-4">
+        <div class="row">
+            {% for site in sites %}
+            <div class="col-md-4 mb-3">
+                <a href="{% url 'site_detail' site.pk %}" class="text-decoration-none text-dark">
+                    <div class="card h-100 shadow-sm site-card">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                {{ site.name }}
+                            </h5>
+                            <p class="card-text">📍 {{ site.location }}</p>
+                            <p class="card-text">🏢 {{ site.company_name }}</p>
+                            <span class="badge 
+                                {% if site.status == 'active' %}bg-success
+                                {% elif site.status == 'on hold' %}bg-warning
+                                {% else %}bg-secondary{% endif %}">
+                                {{ site.status }}
+                            </span>
+                        </div>
+                        <div class="card-footer text-muted">
+                            Created by {{ site.created_by }} on {{ site.created_at|date:"M d, Y" }}
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    
+</div>
 {% endblock %}

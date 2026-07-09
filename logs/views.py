@@ -73,7 +73,7 @@ def add_log(request,pk):
             return redirect('site_detail', pk=pk)
     else:
         form=LogForm()
-    return render(request, "add_log.html", {'form':form})
+    return render(request, "add_log.html", {'form':form, 'site':site})
 
 @login_required
 def materials_log(request, pk):
@@ -93,7 +93,7 @@ def add_mat_log(request,pk):
             return redirect('materials_log', pk=pk)
     else:
         form=MaterialForm()
-    return render(request, "add_mat_log.html", {'form':form})
+    return render(request, "add_mat_log.html", {'form':form, 'log':log})
 
 def signup(request):
     if request.method == 'POST':
