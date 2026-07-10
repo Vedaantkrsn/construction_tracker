@@ -40,7 +40,7 @@ class MaterialEntry(models.Model):
     quantity=models.DecimalField(max_digits=10, decimal_places=2)
     UNIT_CHOICES=[
         ('bags','Bags'),
-        ('kg', 'Kilgoram'),
+        ('kg', 'Kilogram'),
         ('lt', 'Litres'),
         ('unit', 'Units'),
     ]

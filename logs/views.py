@@ -4,19 +4,14 @@ from .forms import SiteForm, LogForm, MaterialForm, SignUpForm, AssignSiteForm
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.contrib.auth.models import User
-from django.http import HttpResponseForbidden
+
 
 # Create your views here.
-def manager_required(user):
-    return (user.is_authenticated and hasattr(user,"userprofile") and user.userprofile.role== "manager")
 
-def worker_required(user):
-    return (user.is_authenticated and hasattr(user,"userprofile") and user.userprofile.role== "worker")
 
 @login_required
 def dashboard(request):
-    if not manager_required(request.user):
-        return HttpResponseForbidden("You are not allowed to view this page.")
+    
     profile=UserProfile.objects.get(user=request.user)
     if profile.role =='worker':
         return redirect('worker_dashboard')
@@ -32,8 +27,7 @@ def dashboard(request):
 
 @login_required
 def worker_dashboard(request):
-    if not worker_required(request.user):
-        return redirect('dashboard')
+    
     profile=UserProfile.objects.get(user=request.user)
     assigned_sites=request.user.assigned_sites.all()
     today=timezone.now().date()
@@ -47,8 +41,7 @@ def worker_dashboard(request):
 
 @login_required
 def add_site(request):
-    if not manager_required(request.user):
-        return HttpResponseForbidden("You are not allowed to view this page.")
+    
     if request.method == 'POST':
         form=SiteForm(request.POST)
         if form.is_valid():
@@ -63,24 +56,30 @@ def add_site(request):
 
 @login_required
 def site_detail(request, pk):
-    if not manager_required(request.user):
-        return HttpResponseForbidden("You are not allowed to view this page.")
-    site=Site.objects.get(pk=pk)
-    logdetail=DailyLog.objects.filter(site_worked_on=site)
-    return render(request, "site_detail.html", {'site': site, 'logdetail': logdetail})
+    
+    site = get_object_or_404(Site, pk=pk)
+    if request.method == "POST":
+        status = request.POST.get("status")
+        if status in ["active", "on hold", "completed"]:
+            site.status = status
+            site.save()
+        return redirect("site_detail", pk=pk)
+    logdetail = DailyLog.objects.filter(site_worked_on=site)
+    return render(request, "site_detail.html", {
+        "site": site,
+        "logdetail": logdetail,
+    })
 
 @login_required
 def worker_site_detail(request,pk):
-    if not worker_required(request.user):
-        return redirect('dashboard')
+    
     site=Site.objects.get(pk=pk)
     attendance_log=Attendance.objects.filter(worksite=site, worker=request.user)
     return render(request, 'worker_site_detail.html', {'site':site, 'attendance_log':attendance_log})
 
 @login_required
 def add_log(request,pk):
-    if not manager_required(request.user):
-        return HttpResponseForbidden("You are not allowed to view this page.")
+    
     site=Site.objects.get(pk=pk)
     if request.method == 'POST':
         form=LogForm(request.POST)
@@ -96,16 +95,14 @@ def add_log(request,pk):
 
 @login_required
 def materials_log(request, pk):
-    if not manager_required(request.user):
-        return HttpResponseForbidden("You are not allowed to view this page.")
+    
     log=DailyLog.objects.get(pk=pk)
     material_list= MaterialEntry.objects.filter(daily_log=log)
     return render(request,  "materials_log.html", {'material_list':material_list, 'log':log})
 
 @login_required
 def add_mat_log(request,pk):
-    if not manager_required(request.user):
-        return HttpResponseForbidden("You are not allowed to view this page.")
+    
     log=DailyLog.objects.get(pk=pk)
     if request.method == 'POST':
         form=MaterialForm(request.POST)
@@ -133,6 +130,8 @@ def signup(request):
 @login_required
 def mark_attendance(request,pk):
     site=Site.objects.get(pk=pk)
+    if not request.user.assigned_sites.filter(pk=site.pk).exists():
+        return redirect('worker_dashboard')
     today=timezone.now().date()
     already_marked=Attendance.objects.filter(worker=request.user, worksite=site, attendance_date=today).exists()
     if not already_marked:
@@ -146,15 +145,13 @@ def mark_attendance(request,pk):
 
 @login_required
 def worker_list(request):
-    if not manager_required(request.user):
-        return HttpResponseForbidden("You are not allowed to view this page.")
+    
     workerlist=UserProfile.objects.filter(role='worker')
     return render(request, 'worker_list.html', {'workerlist': workerlist})
 
 @login_required
 def worker_profile(request, pk):
-    if not manager_required(request.user):
-        return HttpResponseForbidden("You are not allowed to view this page.")
+    
     worker=get_object_or_404(User, pk=pk,userprofile__role='worker')
     assigned_sites=worker.assigned_sites.all()
     attendance_records=Attendance.objects.filter(worker=worker).select_related('worksite').order_by('-attendance_date')
@@ -172,8 +169,7 @@ def worker_profile(request, pk):
 
 @login_required
 def assign_sites(request,pk):
-    if not manager_required(request.user):
-        return HttpResponseForbidden("You are not allowed to view this page.")
+    
     worker=get_object_or_404(User, pk=pk, userprofile__role='worker')
     if request.method=='POST':
         form=AssignSiteForm(request.POST)
@@ -187,12 +183,45 @@ def assign_sites(request,pk):
 
 @login_required
 def update_email(request,pk):
-    if not manager_required(request.user):
-        return HttpResponseForbidden("You are not allowed to view this page.")
     worker=get_object_or_404(User, pk=pk, userprofile__role='worker')
     if request.method == 'POST':
         email=request.POST.get('email')
         worker.email=email
         worker.save()
-        return redirect('worker_profile', pk=pk)
-    return render(request, 'worker_profile.html', {'worker': worker})
+    return redirect('worker_profile', pk=pk)
+
+
+@login_required
+def delete_site(request, pk):
+    site = get_object_or_404(Site, pk=pk)
+    if request.method == "POST":
+        site.delete()
+        return redirect("dashboard")
+    return redirect("site_detail", pk=pk)
+
+
+@login_required
+def delete_log(request, pk):
+    log = get_object_or_404(DailyLog, pk=pk)
+    site_pk = log.site_worked_on.pk
+    if request.method == "POST":
+        log.delete()
+    return redirect("site_detail", pk=site_pk)
+
+
+@login_required
+def delete_material(request, pk):
+    material = get_object_or_404(MaterialEntry, pk=pk)
+    log_pk = material.daily_log.pk
+    if request.method == "POST":
+        material.delete()
+    return redirect("materials_log", pk=log_pk)
+
+
+@login_required
+def remove_assigned_site(request, worker_pk, site_pk):
+    worker = get_object_or_404(User, pk=worker_pk, userprofile__role="worker")
+    site = get_object_or_404(Site, pk=site_pk)
+    if request.method == "POST":
+        site.workers.remove(worker)
+    return redirect("worker_profile", pk=worker_pk)

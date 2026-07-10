@@ -17,4 +17,8 @@ urlpatterns= [
     path("dashboard/worker_list/<int:pk>/", views.worker_profile, name='worker_profile'),
     path("worker/<int:pk>/assign_sites/", views.assign_sites, name='assign_sites'),
     path("worker_list/<int:pk>/update_email/", views.update_email, name='update_email'),
+    path("sites/<int:pk>/delete/", views.delete_site, name="delete_site"),
+    path("logs/<int:pk>/delete/", views.delete_log, name="delete_log"),
+    path("materials/<int:pk>/delete/", views.delete_material, name="delete_material"),
+    path("worker/<int:worker_pk>/remove_site/<int:site_pk>/", views.remove_assigned_site, name="remove_assigned_site"),
 ]

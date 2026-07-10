@@ -5,7 +5,7 @@ from django.contrib.auth.forms import UserCreationForm
 class SiteForm(forms.ModelForm):
     class Meta:
         model= Site
-        fields= ['name', 'location', 'start_date', 'company_name']
+        fields= ['name', 'location', 'start_date', 'company_name','status']
 
 class LogForm(forms.ModelForm):
     class Meta:
