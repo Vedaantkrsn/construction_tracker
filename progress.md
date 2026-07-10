@@ -262,7 +262,12 @@ LOGOUT_REDIRECT_URL = 'login'
 - Assign worker to site feature — manager can assign sites to workers from worker profile page
 - Worker list link on manager dashboard
 -  Inline email editing on worker profile — click Edit, enter email, saves and reloads
-
+- Bootstrap styling complete across all pages
+- Consistent warm beige color palette throughout
+- Custom CSS for cards, tables, hover effects
+- Responsive navbar with user info
+- Tooltip help text on signup form
+- Styled forms, tables, cards, buttons
 
 
 ---
@@ -278,6 +283,8 @@ Just finished building the dashboard view with stats. Now building dashboard.htm
 - Attendance system complete. Deciding next feature.
 - Worker profile system complete. Building assign worker to site feature next.
 - Assign worker feature complete. Moving to Query system next, then Bootstrap styling.
+- Bootstrap styling complete. Remaining unstyled: worker_dashboard.html, worker_site_detail.html. 
+- Next: finish styling, then query system if time allows. Deadline July 12th.
 
 ---
 

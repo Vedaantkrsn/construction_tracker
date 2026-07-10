@@ -1,22 +1,68 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Worker Dashboard</h1>
-<p> Welcome {{user.username}}!</p>
-<h2> Assigned Sites</h2>
-{% for site in assigned_sites %}
-    <div>
-        <a href="{% url 'worker_site_detail' site.id %}">{{ site.name }}</a>
-        {% if site.pk in marked_sites %}
-            <button disabled>Marked</button>
+
+<div class="container-fluid px-4 mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>👷 Worker Dashboard</h2>
+        <h5 class="mb-0">
+            Welcome, <strong>{{ user.username }}</strong>!
+        </h5>
+    </div>
+
+    <div class="sites-container mb-4">
+        {% if assigned_sites %}
+        <div class="row">
+            {% for site in assigned_sites %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card site-card h-100 shadow-sm">
+                    <div class="card-header site-header">
+                        <h5 class="mb-0">{{ site.name }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>
+                            <strong>📍 Location:</strong><br>
+                            {{ site.location }}
+                        </p>
+                        <p>
+                            <strong>📊 Status:</strong><br>
+                            {{ site.status }}
+                        </p>
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{% url 'worker_site_detail' site.pk %}"
+                            class="btn site-btn">
+                                View Details
+                            </a>
+                            {% if site.pk in marked_sites %}
+                                <button class="btn btn-secondary" disabled>
+                                    ✓ Marked
+                                </button>
+                            {% else %}
+                                <form method="POST"
+                                    action="{% url 'mark_attendance' site.pk %}">
+                                    {% csrf_token %}
+                                    <button type="submit"
+                                            class="btn btn-success">
+                                        Mark Attendance
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
         {% else %}
-            <form method="POST" action="{% url 'mark_attendance' site.pk %}">
-                {% csrf_token %}
-                <button type="submit">Mark Attendance </button>
-            </form>
+        <div class="card shadow-sm">
+            <div class="card-body text-center text-muted py-5">
+                <h5>No assigned sites.</h5>
+                <p class="mb-0">
+                    Your manager hasn't assigned any construction sites yet.
+                </p>
+            </div>
+        </div>
         {% endif %}
     </div>
-{% empty %}
-    <p>No assigned sites.</p>
-{% endfor %}
+</div>
 {% endblock %}

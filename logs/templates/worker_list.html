@@ -1,13 +1,38 @@
 {% extends 'base.html' %}
-{% block content%}
 
-<h1>Worker List</h1>
-<ul>
-    {% for worker in workerlist %}
-        <li> <a href="{% url 'worker_profile' worker.user.pk %}">{{ worker.user.username }}</a> </li>
-    {% endfor %}
-</ul>
+{% block content %}
 
-<a href="{% url 'dashboard' %}">Back to Dashboard</a>
-
+<div class="container-fluid px-4 mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>👷 Worker Directory</h2>
+        <a href="{% url 'dashboard' %}" class="btn btn-success">
+            ← Back to Dashboard
+        </a>
+    </div>
+    <div class="card shadow-sm">
+        <div class="card-header site-header">
+            <h4 class="mb-0">Workers</h4>
+        </div>
+        <div class="card-body table-container material-log-body">
+            <div class="list-group worker-rowcard">
+                {% for worker in workerlist %}
+                <a href="{% url 'worker_profile' worker.user.pk %}"
+                   class="list-group-item list-group-item-action d-flex justify-content-between align-items-center worker-item">
+                    <div>
+                        <span class="fs-5 me-2">👷</span>
+                        <strong>{{ worker.user.username }}</strong>
+                    </div>
+                    <span class="btn site-btn btn-sm">
+                        >>
+                    </span>
+                </a>
+                {% empty %}
+                <div class="text-center text-muted py-4">
+                    No workers available.
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

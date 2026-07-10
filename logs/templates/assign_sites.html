@@ -1,17 +1,33 @@
-    
 {% extends 'base.html' %}
 
 {% block content %}
 
-<h1> Assign Sites </h1>
-<p><a href="{% url 'worker_profile' worker.pk %}">Back to Profile</a></p>
-
-<form method="POST">
-    {% csrf_token  %}
-    {{ form.as_p}}
-    <button type="submit">Assign Sites</button>
-</form>
-
-
-
+<div class="container-fluid px-4 mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Assign Sites</h2>
+        <a href="{% url 'worker_profile' worker.pk %}" class="btn btn-success">
+            ← Back to Profile
+        </a>
+    </div>
+    <div class="card shadow add-log-card">
+        <div class="card-header site-header">
+            <h4 class="mb-0">Assign Sites to {{ worker.username }}</h4>
+        </div>
+        <div class="card-body log-detail-body p-4">
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <div class="mt-4">
+                    <button type="submit" class="btn site-btn">
+                        📌 Assign
+                    </button>
+                    <a href="{% url 'worker_profile' worker.pk %}"
+                       class="btn btn-success ms-2">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

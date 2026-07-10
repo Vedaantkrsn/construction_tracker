@@ -1,30 +1,68 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2> Site Details </h2>
-<p><strong>Name:</strong> {{ site.name }}</p>
-<p><strong>Location:</strong> {{ site.location }}</p>
-<p><strong>Status:</strong> {{ site.status }}</p>
 
-<h2> Attendance Log For {{ site.name }}</h2>
-<table>
-    <thead>
-        <tr>
-            <th> Date </th>
-            <th> Present/Absent </th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for log in attendance_log %}
-            <tr>
-                <td> {{ log.attendance_date }} </td>
-                {% if log.present_or_absent %}
-                    <td> Present </td>
-                {% else %}
-                    <td> Absent </td>
-                {% endif %}
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="container-fluid px-4 mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>🏗️ Site Details</h2>
+        <a href="{% url 'worker_dashboard' %}" class="btn btn-success">
+            ← Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Site Information -->
+    <div class="card shadow-sm mb-4 site-detail-card">
+        <div class="card-header site-detail-header">
+            <h3 class="mb-0">{{ site.name }}</h3>
+        </div>
+        <div class="card-body site-detail-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>📍 Location:</strong> {{ site.location }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>📊 Status:</strong> {{ site.status }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attendance Records -->
+    <div class="card shadow-sm attendance-card">
+        <div class="card-header site-header">
+            <h4 class="mb-0">📅 Attendance Records</h4>
+        </div>
+        <div class="card-body table-container attendance-records-body">
+            {% if attendance_log %}
+            <table class="logs-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for log in attendance_log %}
+                    <tr>
+                        <td>{{ log.attendance_date }}</td>
+                        <td>
+                            {% if log.present_or_absent %}
+                                <span class="badge bg-success">Present</span>
+                            {% else %}
+                                <span class="badge bg-danger">Absent</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="text-muted mb-0">
+                No attendance records available.
+            </p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
 {% endblock %}
