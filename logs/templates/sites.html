@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2 class="fw-bold mb-1">
+            <i class="bi bi-building"></i>
+            Construction Sites
+        </h2>
+
+        <p class="text-muted mb-0">
+            Manage all construction sites
+        </p>
+    </div>
+
+    <a href="{% url 'add_site' %}" class="btn btn-warning">
+        <i class="bi bi-plus-circle"></i>
+        Add Site
+    </a>
+
+</div>
+
+
+<div class="row">
+
+    {% for site in sites %}
+
+    <div class="col-lg-4 col-md-6 mb-4">
+
+        <div class="card h-100 shadow-sm border-0 site-card">
+
+            <div class="card-body">
+
+                <h5 class="fw-bold">
+                    {{ site.name }}
+                </h5>
+
+                <p class="text-muted mb-2">
+                    <i class="bi bi-geo-alt-fill"></i>
+                    {{ site.location }}
+                </p>
+
+                <p class="mb-3">
+                    <i class="bi bi-building"></i>
+                    {{ site.company_name }}
+                </p>
+
+                {% if site.status == "active" %}
+                    <span class="badge bg-success">Active</span>
+
+                {% elif site.status == "on hold" %}
+                    <span class="badge bg-warning text-dark">
+                        On Hold
+                    </span>
+
+                {% else %}
+                    <span class="badge bg-secondary">
+                        Completed
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+            <div class="card-footer bg-white border-0">
+
+                <a href="{% url 'site_detail' site.pk %}"
+                   class="btn btn-outline-dark w-100">
+
+                    View Details
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% empty %}
+
+    <div class="col-12">
+
+        <div class="alert alert-info">
+
+            No construction sites found.
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

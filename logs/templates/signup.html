@@ -1,58 +1,182 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-5">
-            <div class="card shadow">
-                <div class="card-body p-4">
-                    <h2 class="text-center mb-4">Sign Up</h2>
-                    <form method="POST">
-                        {% csrf_token %}
-                        {% for field in form %}
-                            <div class="mb-3">
-                                <label class="form-label"> {{ field.label }}:
-                                
-                                    {% if field.help_text and field.name != 'password1' and field.name != 'password2' %}
-                                        <span class="ms-1 text-muted" data-bs-toggle="tooltip" title="{{ field.help_text }}"> 
-                                            <i class="bi bi-info-circle"></i> 
-                                        </span>
-                                    {% endif %}
-                                </label>
-                                {{ field }}
 
-                                {% if field.name == 'password1' %}
-                                    <div class="form-text">
-                                        {{field.help_text|safe}}
-                                    </div>
-                                {% endif %}
+<div class="signup-wrapper">
 
-                                {% if field.name == 'password2' %}
-                                    <div class="form-text">
-                                        {{field.help_text|safe}}
-                                    </div>
-                                {% endif %}
+    <!-- LEFT IMAGE 60% -->
+    <div class="signup-left">
 
-                                {% for error in field.errors %}
-                                    <div class="text-danger small mt-1">{{ error }}</div>
-                                {% endfor %}
-                            </div>
-                        {% endfor %}
-                        <button class="btn btn-success w-100 mt-2" type="submit">Create Account</button>
-                    </form>
-                    <p class="text-center mt-3">Already have an account? <a href="{% url 'login' %}">Login</a></p>
-                </div>
-            </div>
-        </div>
+        <img src="{% static 'images/login-bg-new.jpg' %}"
+             alt="Construction">
+
     </div>
+
+
+    <!-- RIGHT FORM 40% -->
+    <div class="signup-right">
+
+
+        <div class="signup-title">
+
+            <h1>Create Your Account</h1>
+
+            <p>
+                Join Construction Tracker and manage your projects efficiently.
+            </p>
+
+        </div>
+
+
+
+        <div class="signup-card">
+
+
+            <h2>
+                Sign Up
+            </h2>
+
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+
+                {% for field in form %}
+
+                <div class="signup-field">
+
+
+                    <label>
+
+                        {{field.label}}
+
+
+                        {% if field.name == 'password1' %}
+
+                        <span class="info-btn"
+                              onclick="togglePasswordHelp()">
+
+                            <i class="bi bi-info-circle"></i>
+
+                        </span>
+
+                        {% endif %}
+
+
+                    </label>
+
+
+
+                    {{field}}
+
+
+
+                    {% if field.name == 'password1' %}
+
+                    <div id="password-help"
+                         class="password-help">
+
+                        {{field.help_text|safe}}
+
+                    </div>
+
+                    {% endif %}
+
+
+
+
+                    {% for error in field.errors %}
+
+                    <small class="text-danger">
+                        {{error}}
+                    </small>
+
+                    {% endfor %}
+
+
+
+                </div>
+
+
+                {% endfor %}
+
+
+
+                <!-- future email field -->
+                <!--
+                <div class="signup-field">
+
+                    <label>Email</label>
+
+                    <input type="email"
+                           class="form-control"
+                           placeholder="Enter email">
+
+                </div>
+                -->
+
+
+
+                <button class="signup-submit">
+
+                    <i class="bi bi-person-plus"></i>
+                    Create Account
+
+                </button>
+
+
+            </form>
+
+
+
+            <p class="login-link">
+
+                Already have an account?
+
+                <a href="{% url 'login' %}">
+                    Login
+                </a>
+
+            </p>
+
+
+
+        </div>
+
+
+    </div>
+
+
 </div>
 
+
+
 <script>
-    const toolTipTriggerList=document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    toolTipTriggerList.forEach(el => {
-        new bootstrap.Tooltip(el);
-    });
+
+function togglePasswordHelp(){
+
+    let box=document.getElementById(
+        "password-help"
+    );
+
+
+    if(box.style.display==="block"){
+
+        box.style.display="none";
+
+    }
+
+    else{
+
+        box.style.display="block";
+
+    }
+
+}
 
 </script>
+
 
 {% endblock %}

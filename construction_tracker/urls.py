@@ -18,10 +18,13 @@ from django.contrib import admin
 from django.urls import path
 from django.urls import include
 from django.contrib.auth import views as auth_views
+from django.views.generic import RedirectView #updated
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('logs.urls')),
+    path('', RedirectView.as_view(pattern_name='dashboard', permanent=False)),
     path("login/", auth_views.LoginView.as_view(redirect_authenticated_user=True), name='login'),
     path("logout/", auth_views.LogoutView.as_view(), name='logout'),
 ]
+handler403 = "logs.views.custom_403"

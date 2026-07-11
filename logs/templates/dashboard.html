@@ -1,45 +1,97 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
+
 <div class="container-fluid px-5 mt-4">
     <h1 class="mb-3">Dashboard</h1>
     <p>Welcome, <strong>{{ request.user.username }}</strong>!</p>
 
     <!-- Stats Row -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card text-white bg-primary">
-                <div class="card-body">
-                    <h5 class="card-title">Total Sites</h5>
-                    <h2>{{ total_sites }}</h2>
+    <div class="row g-4 mb-4">
+
+        <div class="col-lg-2 col-md-4">
+            <div class="card dashboard-card">
+                <div class="card-body text-center">
+                    <i class="bi bi-building fs-2 text-warning"></i>
+                    <p class="text-muted mt-2 mb-1">Sites</p>
+                    <h3>{{ total_sites }}</h3>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-success">
-                <div class="card-body">
-                    <h5 class="card-title">Active</h5>
-                    <h2>{{ total_active_sites }}</h2>
+
+        <div class="col-lg-2 col-md-4">
+            <div class="card dashboard-card">
+                <div class="card-body text-center">
+                    <i class="bi bi-check-circle fs-2 text-success"></i>
+                    <p class="text-muted mt-2 mb-1">Active</p>
+                    <h3>{{ total_active_sites }}</h3>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-warning">
-                <div class="card-body">
-                    <h5 class="card-title">On Hold</h5>
-                    <h2>{{ total_onhold_sites }}</h2>
+
+        <div class="col-lg-2 col-md-4">
+            <div class="card dashboard-card">
+                <div class="card-body text-center">
+                    <i class="bi bi-pause-circle fs-2 text-warning"></i>
+                    <p class="text-muted mt-2 mb-1">On Hold</p>
+                    <h3>{{ total_onhold_sites }}</h3>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-secondary">
-                <div class="card-body">
-                    <h5 class="card-title">Completed</h5>
-                    <h2>{{ total_completed_sites }}</h2>
+
+        <div class="col-lg-2 col-md-4">
+            <div class="card dashboard-card">
+                <div class="card-body text-center">
+                    <i class="bi bi-flag-fill fs-2 text-secondary"></i>
+                    <p class="text-muted mt-2 mb-1">Completed</p>
+                    <h3>{{ total_completed_sites }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-2 col-md-4">
+            <div class="card dashboard-card">
+                <div class="card-body text-center">
+                    <i class="bi bi-journal-text fs-2 text-primary"></i>
+                    <p class="text-muted mt-2 mb-1">Logs</p>
+                    <h3>{{ total_logs }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-2 col-md-4">
+            <div class="card dashboard-card">
+                <div class="card-body text-center">
+                    <i class="bi bi-people-fill fs-2 text-danger"></i>
+                    <p class="text-muted mt-2 mb-1">Workers</p>
+                    <h3>{{ total_workers }}</h3>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Charts -->
+
+<div class="row g-4 mb-5">
+    <div class="col-lg-7">
+        <div class="card dashboard-card p-4">
+            <h5 class="fw-bold mb-3">
+                <i class="bi bi-bar-chart-fill"></i>
+                    Daily Logs
+                    </h5>
+            <canvas id="logsChart"></canvas>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card dashboard-card p-4">
+            <h5 class="fw-bold mb-3">
+                <i class="bi bi-pie-chart-fill"></i>
+                Site Status
+            </h5>
+            <canvas id="statusChart"></canvas>
+        </div>
+    </div>
+</div>
 
     <!-- Sites -->
     <div class="d-flex justify-content-between align-items-center mb-1">
@@ -55,24 +107,42 @@
             {% for site in sites %}
             <div class="col-md-4 mb-3">
                 <a href="{% url 'site_detail' site.pk %}" class="text-decoration-none text-dark">
-                    <div class="card h-100 shadow-sm site-card">
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                {{ site.name }}
-                            </h5>
-                            <p class="card-text">📍 {{ site.location }}</p>
-                            <p class="card-text">🏢 {{ site.company_name }}</p>
-                            <span class="badge 
-                                {% if site.status == 'active' %}bg-success
-                                {% elif site.status == 'on hold' %}bg-warning
-                                {% else %}bg-secondary{% endif %}">
-                                {{ site.status }}
-                            </span>
-                        </div>
-                        <div class="card-footer text-muted">
-                            Created by {{ site.created_by }} on {{ site.created_at|date:"M d, Y" }}
-                        </div>
-                    </div>
+                    <div class="card h-100 site-card">
+
+    <div class="card-body">
+
+        <h4 class="fw-bold mb-3">
+            🏗 {{ site.name }}
+        </h4>
+
+        <p class="mb-2">
+            <i class="bi bi-geo-alt-fill"></i>
+            {{ site.location }}
+        </p>
+         <p class="mb-3">
+            <i class="bi bi-building"></i>
+            {{ site.company_name }}
+        </p>
+        {% if site.status == "active" %}
+            <span class="status-badge active">
+                🟢 Active
+            </span>
+        {% elif site.status == "on hold" %}
+            <span class="status-badge hold">
+                🟡 On Hold
+            </span>
+        {% else %}
+            <span class="status-badge completed">
+                🔵 Completed
+            </span>
+        {% endif %}
+        <div class="mt-4">
+            <span class="view-text">
+                View Site →
+            </span>
+        </div>
+    </div>
+</div>
                 </a>
             </div>
             {% endfor %}
@@ -80,5 +150,91 @@
     </div>
 
     
+    
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+
+const logLabels = [
+{% for log in daily_logs %}
+"{{ log.date_today }}",
+{% endfor %}
+];
+
+
+const logData = [
+{% for log in daily_logs %}
+{{ log.total }},
+{% endfor %}
+];
+
+</script>
+<script>
+
+const logsCtx = document.getElementById('logsChart');
+
+new Chart(logsCtx, {
+    type: 'bar',
+    data: {
+        labels: logLabels,
+        datasets:[{
+        label:"Daily Logs",
+        data: logData,
+        }]
+    },
+    options:{
+        responsive:true
+    }
+});
+
+
+
+const statusCtx = document.getElementById('statusChart');
+
+
+new Chart(statusCtx, {
+
+    type:'doughnut',
+
+    data:{
+
+        labels:[
+            "Active",
+            "On Hold",
+            "Completed"
+        ],
+
+        datasets:[{
+
+            data:[
+                {{ total_active_sites|default:0 }},
+                {{ total_onhold_sites|default:0 }},
+                {{ total_completed_sites|default:0 }}
+            ],
+            backgroundColor:[
+            '#198754',
+            '#ffc107',
+            '#0d6efd'
+            ]
+
+        }]
+
+    },
+
+    options:{
+
+    responsive:true,
+
+    animation:{
+        duration:1200
+    }
+
+}
+
+});
+
+</script>
+
+
 {% endblock %}

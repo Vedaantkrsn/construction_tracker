@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator
+from django.utils import timezone
+import uuid
 
 # Create your models here.
 class Site(models.Model):
@@ -23,7 +26,7 @@ class Site(models.Model):
 class DailyLog(models.Model):
     site_worked_on=models.ForeignKey(Site, on_delete=models.CASCADE)
     date_today=models.DateField()
-    worker_count=models.IntegerField()
+    worker_count=models.PositiveIntegerField()
     site_manager=models.CharField(max_length=200)
     work_overview=models.TextField()
     created_by=models.ForeignKey(User, on_delete=models.CASCADE)
@@ -37,7 +40,7 @@ class DailyLog(models.Model):
 class MaterialEntry(models.Model):
     daily_log=models.ForeignKey(DailyLog, on_delete=models.CASCADE)
     material_name=models.CharField(max_length=200)
-    quantity=models.DecimalField(max_digits=10, decimal_places=2)
+    quantity=models.DecimalField(max_digits=10, decimal_places=2,validators=[MinValueValidator(0)])
     UNIT_CHOICES=[
         ('bags','Bags'),
         ('kg', 'Kilogram'),
@@ -62,10 +65,47 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.role
     
+# class Attendance(models.Model):
+#     worker=models.ForeignKey(User, on_delete=models.CASCADE)
+#     worksite=models.ForeignKey(Site, on_delete=models.CASCADE)
+#     attendance_date=models.DateField()
+#     present_or_absent=models.BooleanField()
+#     def __str__(self):
+#         return f"{self.worker.username} - {self.attendance_date}"
+
 class Attendance(models.Model):
-    worker=models.ForeignKey(User, on_delete=models.CASCADE)
-    worksite=models.ForeignKey(Site, on_delete=models.CASCADE)
-    attendance_date=models.DateField()
-    present_or_absent=models.BooleanField()
+    worker = models.ForeignKey(User, on_delete=models.CASCADE)
+    worksite = models.ForeignKey(Site, on_delete=models.CASCADE)
+    attendance_date = models.DateField()
+    present_or_absent = models.BooleanField()
+    marked_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["worker", "worksite", "attendance_date"],
+                name="one_attendance_per_worker_site_day",
+            )
+        ]
+
     def __str__(self):
         return f"{self.worker.username} - {self.attendance_date}"
+
+
+class AttendanceQRCode(models.Model):
+    site = models.ForeignKey(Site, on_delete=models.CASCADE, related_name="attendance_qr_codes")
+    token = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    @property
+    def is_valid(self):
+        return self.is_active and self.expires_at > timezone.now()
+
+    def __str__(self):
+        return f"{self.site.name} QR - expires {self.expires_at:%d %b %Y %H:%M}"

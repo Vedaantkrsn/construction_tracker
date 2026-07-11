@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="card shadow-sm mx-auto" style="max-width: 600px;">
+        <div class="card-body text-center p-4">
+            <h2 class="mb-2">Attendance QR Code</h2>
+            <p class="text-muted mb-4">{{ attendance_qr.site.name }} &middot; valid until {{ attendance_qr.expires_at|date:"d M Y, H:i" }}</p>
+            {% if attendance_qr.is_valid %}
+                <img class="img-fluid border rounded p-2 bg-white" style="max-width: 320px;" src="data:image/png;base64,{{ qr_image }}" alt="Attendance QR code for {{ attendance_qr.site.name }}">
+                <p class="mt-4 mb-1">Ask assigned workers to scan this code while it is displayed.</p>
+                <p class="small text-muted mb-4">This code expires in 10 minutes.</p>
+                <details class="text-start mb-4">
+                    <summary>Demo check-in link</summary>
+                    <a class="small text-break" href="{{ check_in_url }}">{{ check_in_url }}</a>
+                </details>
+            {% else %}
+                <div class="alert alert-warning">This QR code has expired. Generate a new one from the site page.</div>
+            {% endif %}
+            <a class="btn btn-outline-secondary" href="{% url 'site_detail' attendance_qr.site.pk %}">Back to Site</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

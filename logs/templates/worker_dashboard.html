@@ -37,15 +37,17 @@
                                 <button class="btn btn-secondary" disabled>
                                     ✓ Marked
                                 </button>
-                            {% else %}
-                                <form method="POST"
-                                    action="{% url 'mark_attendance' site.pk %}">
-                                    {% csrf_token %}
-                                    <button type="submit"
-                                            class="btn btn-success">
-                                        Mark Attendance
-                                    </button>
-                                </form>
+                                {% else %}
+                                    {% if site.active_qr_code %}
+                                        <a href="{% url 'qr_check_in' site.active_qr_code.token %}"
+                                        class="btn btn-success">
+                                            Open Attendance Check-in
+                                        </a>
+                                    {% else %}
+                                        <span class="btn btn-outline-secondary disabled">
+                                            Waiting for manager QR
+                                        </span>
+                                    {% endif %}
                             {% endif %}
                         </div>
                     </div>

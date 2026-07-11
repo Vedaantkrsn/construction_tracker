@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="card shadow-sm mx-auto" style="max-width: 560px;">
+        <div class="card-body p-4 text-center">
+            <h2 class="mb-3">Site Attendance</h2>
+            <h5>{{ attendance_qr.site.name }}</h5>
+            <p class="text-muted">{{ attendance_qr.site.location }}</p>
+            {% if expired %}
+                <div class="alert alert-warning">This attendance QR code has expired. Ask your manager to generate a new one.</div>
+            {% elif success %}
+                <div class="alert alert-success">Attendance marked successfully at {{ attendance_qr.site.name }}.</div>
+                <a class="btn site-btn" href="{% url 'worker_dashboard' %}">Back to Dashboard</a>
+            {% elif already_marked %}
+                <div class="alert alert-info">Your attendance has already been recorded for this site today.</div>
+                <a class="btn site-btn" href="{% url 'worker_dashboard' %}">Back to Dashboard</a>
+            {% else %}
+                <p class="mb-4">Confirm that you are present at this site.</p>
+                <form method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success">Confirm Attendance</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
